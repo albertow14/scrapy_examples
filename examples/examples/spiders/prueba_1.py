@@ -3,27 +3,29 @@ import scrapy
 from urllib.parse import urljoin 
 from scrapy import Request
 
-class Prueba2Spider(scrapy.Spider):
-    name = 'prueba2'
+class VinosCorteInglesSpider(scrapy.Spider):
+    name = 'vinos_corte_ingles_1'
     allowed_domains = ['elcorteingles.es']
     start_urls = ['https://www.elcorteingles.es/club-del-gourmet/vinos/espana/']
 
     def parse(self, response):
         urls = response.xpath('//h3[@class="info-name"]/a/@href').extract()
+        # print(urls)
         for url in urls:
-            string = "https://www.elcorteingles.es"
-            completas = [string + y for y in urls]
-            for x in completas:
-                todas_las_urls = x 
-            yield Request(todas_las_urls, callback=self.extractor)
+            header = "https://www.elcorteingles.es"
+            url = header + url
+            print(url)
+            yield Request(url, callback=self.extractor)
+            # print(completas, "esto esta completo")
+            # self._next_page(response)
 
-        siguiente_pagina = response.xpath('//a[text()="Siguiente"]/@href').extract_first()
-        string = "https://www.elcorteingles.es"
-        completas = response.urljoin("https://www.elcorteingles.es" + siguiente_pagina)
-        print(completas)
-        for x in completas:
-            todas_las_urls_1 = x 
-        yield Request (todas_las_urls_1)
+    # def _next_page(self, response):
+    #     siguiente_pagina = response.xpath('//a[text()="Siguiente"]/@href').extract_first()
+    #     header = "https://www.elcorteingles.es"
+    #     urls = response.urljoin(header + siguiente_pagina)
+    #     print(urls)
+    #     for url in urls:            
+    #         yield Request(url)
 
     def extractor(self,response):
         titulo_ci = response.xpath('//h2[@itemprop="name"]/text()').extract_first()
