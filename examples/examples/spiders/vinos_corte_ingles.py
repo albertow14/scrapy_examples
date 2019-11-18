@@ -17,8 +17,8 @@ class VinosCorteInglesSpider(scrapy.Spider):
             
         for n in range (0,38):
             print(f'https://www.elcorteingles.es/club-del-gourmet/vinos/espana/{n}/')
-            urls = 'https://www.elcorteingles.es/club-del-gourmet/vinos/espana/{n}/'
-                #hacer con una comprenhension list   ∫∫
+            # urls = 'https://www.elcorteingles.es/club-del-gourmet/vinos/espana/{n}/'
+                #hacer con una comprenhension list 
 
 
         # siguiente_url = response.xpath('//a[contains(.,"Siguiente")]').extract()
