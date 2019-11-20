@@ -8,14 +8,37 @@ class VinosCorteInglesSpider(scrapy.Spider):
     allowed_domains = ['elcorteingles.es']
     start_urls = ['https://www.elcorteingles.es/club-del-gourmet/vinos/espana/']
 
+    def __init__(self):
+        self.counter = 0
+
     def parse(self, response):
+        self.after_parse(response)
+
+    def after_parse(self, response):
         urls = response.xpath('//h3[@class="info-name"]/a/@href').extract()
         # print(urls)
         for url in urls:
             header = "https://www.elcorteingles.es"
             url = header + url
             print(url)
-            yield Request(url, callback=self.extractor)
+            titulo_ci = response.xpath('//h2[@itemprop="name"]/text()').extract_first()
+            precio_ci_uno = response.xpath('//span[@class="current   "]/text()').extract_first()
+            yield{'titulo_ci': titulo_ci, 'precio_ci':precio_ci_uno}
+        
+        siguiente_pagina = response.xpath('//a[text()="Siguiente"]/@href').extract_first()
+        self.siguiente_url(siguiente_pagina, response)
+        
+        # extraes el culo de la url, que te da cuando pinchas en el boton siguiente, extra
+
+    def siguiente_url(self, tail_url, response):
+        self.counter += 1
+        HEADER = "https://www.elcorteingles.es"
+        urls_siguiente_pagina = response.urljoin(HEADER + tail_url)
+        print(urls_siguiente_pagina)
+        if self.counter <= 36:
+            self.after_parse(response)
+
+
             # print(completas, "esto esta completo")
             # self._next_page(response)
 
@@ -26,9 +49,3 @@ class VinosCorteInglesSpider(scrapy.Spider):
     #     print(urls)
     #     for url in urls:            
     #         yield Request(url)
-
-    def extractor(self,response):
-        titulo_ci = response.xpath('//h2[@itemprop="name"]/text()').extract_first()
-        precio_ci_uno = response.xpath('//span[@class="current   "]/text()').extract_first()
-        yield{'titulo_ci': titulo_ci, 'precio_ci':precio_ci_uno}
-    pass
