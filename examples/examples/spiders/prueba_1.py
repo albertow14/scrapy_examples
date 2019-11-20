@@ -21,17 +21,22 @@ class VinosCorteInglesSpider(scrapy.Spider):
             header = "https://www.elcorteingles.es"
             url = header + url
             print(url)
-            titulo_ci = response.xpath('//h2[@itemprop="name"]/text()').extract_first()
-            precio_ci_uno = response.xpath('//span[@class="current   "]/text()').extract_first()
-            yield{'titulo_ci': titulo_ci, 'precio_ci':precio_ci_uno}
-        
+            yield Request(url, callback=self.extractor)
+
         siguiente_pagina = response.xpath('//a[text()="Siguiente"]/@href').extract_first()
-        urls_siguiente_pagina = response.urljoin(header + siguiente_pagina)
-        if urls_siguiente_pagina is not None:
-            yield scrapy.Request(response.urljoin(urls_siguiente_pagina))
+        # urls_siguiente_pagina = response.urljoin(header + siguiente_pagina)
+        if siguiente_pagina is not None:
+            yield scrapy.Request(response.urljoin(siguiente_pagina))
         # self.siguiente_url(siguiente_pagina, response)
         
         # extraes el culo de la url, que te da cuando pinchas en el boton siguiente, extra
+
+
+    def extractor(self, response):
+        titulo_ci = response.xpath('//h2[@itemprop="name"]/text()').extract()
+        precio_ci_uno = response.xpath('//span[@class="current   "]/text()').extract()
+        yield{'titulo_ci': titulo_ci, 'precio_ci':precio_ci_uno}
+        
 
     # def siguiente_url(self, tail_url, response):
     #     self.counter += 1
